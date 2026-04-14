@@ -75,7 +75,7 @@ bot.on("message", (msg) => {
 
 app.get("/send-channel-post", async (req, res) => {
   try {
-    await bot.sendMessage(
+    const sent = await bot.sendMessage(
       "@onyxshoptg",
       `🔥 ONYX SHOP
 
@@ -88,8 +88,9 @@ app.get("/send-channel-post", async (req, res) => {
             [
               {
                 text: "🛍 Открыть магазин",
-               web_app: {
-                url: "https://onyxusx-ai.github.io/onyx-shop-miniapp/"
+                web_app: {
+                  url: "https://onyxusx-ai.github.io/onyx-shop-miniapp/"
+                }
               }
             ],
             [
@@ -103,10 +104,10 @@ app.get("/send-channel-post", async (req, res) => {
       }
     );
 
-    res.send("OK");
+    res.json({ ok: true, message_id: sent.message_id });
   } catch (e) {
     console.log("CHANNEL POST ERROR:", e);
-    res.status(500).send("ERROR");
+    res.status(500).json({ ok: false, error: String(e) });
   }
 });
 
