@@ -33,7 +33,7 @@ bot.onText(/\/start/, (msg) => {
           {
             text: "🛍 Открыть магазин",
             web_app: {
-              url: "https://t.me/onyxshoptg_bot"
+              url: "https://onyxusx-ai.github.io/onyx-shop-miniapp/"
             }
           }
         ]
