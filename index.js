@@ -88,15 +88,7 @@ app.get("/send-channel-post", async (req, res) => {
             [
               {
                 text: "🛍 Открыть магазин",
-                web_app: {
                   url: "https://onyxusx-ai.github.io/onyx-shop-miniapp/"
-                }
-              }
-            ],
-            [
-              {
-                text: "📩 Написать админу",
-                url: "https://t.me/onyxshopadmin"
               }
             ]
           ]
