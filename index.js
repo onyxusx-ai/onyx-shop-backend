@@ -93,7 +93,41 @@ app.post(`/bot${BOT_TOKEN}`, (req, res) => {
 bot.on("message", (msg) => {
   console.log("CHAT_ID:", msg.chat.id);
 });
+app.get("/send-channel-post", async (req, res) => {
+  try {
+    await bot.sendMessage(
+      "@onyxshoptg",
+      `🔥 ONYX SHOP
 
+Теперь заказывать стало ещё проще.
+
+👇 Жми кнопку ниже и переходи в магазин`,
+      {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "🛍 Открыть магазин",
+                url: "https://onyxusx-ai.github.io/onyx-shop-miniapp/"
+              }
+            ],
+            [
+              {
+                text: "📩 Написать админу",
+                url: "https://t.me/onyxshopadmin"
+              }
+            ]
+          ]
+        }
+      }
+    );
+
+    res.send("OK");
+  } catch (e) {
+    console.log(e);
+    res.status(500).send("ERROR");
+  }
+});
 app.listen(PORT, async () => {
   console.log("Server started");
 
