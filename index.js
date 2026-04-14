@@ -21,24 +21,33 @@ app.get("/", (req, res) => {
 // получение заказа
 app.post("/api/order", async (req, res) => {
   try {
-    const { items, total } = req.body;
+    const {
+      items = [],
+      total = 0,
+      customerName = "Не указано",
+      customerContact = "Не указано",
+      customerComment = "Без комментария"
+    } = req.body;
 
     let text = `🔥 НОВЫЙ ЗАКАЗ\n\n`;
 
     items.forEach((item, i) => {
       text += `${i + 1}. ${item.name}\n`;
-      text += `Размер: ${item.size}\n`;
+      text += `Размер / цвет: ${item.size}\n`;
       text += `Кол-во: ${item.qty}\n`;
       text += `Цена: ${item.priceRub}₽\n\n`;
     });
 
-    text += `💰 ИТОГО: ${total}₽`;
+    text += `💰 ИТОГО: ${total}₽\n\n`;
+    text += `👤 Имя: ${customerName}\n`;
+    text += `📞 Контакт: ${customerContact}\n`;
+    text += `📝 Комментарий: ${customerComment}`;
 
     await bot.sendMessage(ADMIN_CHAT_ID, text);
 
     res.json({ ok: true });
   } catch (e) {
-    console.log(e);
+    console.log("ORDER ERROR:", e);
     res.status(500).json({ ok: false });
   }
 });
