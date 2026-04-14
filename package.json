@@ -1,0 +1,14 @@
+{
+  "name": "onyx-shop-backend",
+  "version": "1.0.0",
+  "description": "Backend for ONYX SHOP Telegram Mini App",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "node-telegram-bot-api": "^0.66.0"
+  }
+}
