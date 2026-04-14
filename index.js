@@ -12,8 +12,11 @@ app.use(cors());
 app.use(express.json());
 
 const bot = new TelegramBot(BOT_TOKEN, { webHook: true });
-bot.onText(/\/start/, (msg) => {
+bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
+
+  await bot.sendMessage(chatId, "Пожалуйста нажмите кнопку снизу⬇️");
+});
 
   bot.sendMessage(chatId, `
 🔥 ONYX SHOP
