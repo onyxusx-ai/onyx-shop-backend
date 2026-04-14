@@ -12,7 +12,35 @@ app.use(cors());
 app.use(express.json());
 
 const bot = new TelegramBot(BOT_TOKEN, { webHook: true });
+bot.onText(/\/start/, (msg) => {
+  const chatId = msg.chat.id;
 
+  bot.sendMessage(chatId, `
+🔥 ONYX SHOP
+
+Добро пожаловать!
+
+⚡ У нас ты найдёшь:
+— стильную одежду  
+— аксессуары (Goyard, Corteiz и др.)  
+— быстрый заказ  
+
+👇 Жми кнопку ниже и открывай магазин
+  `, {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: "🛍 Открыть магазин",
+            web_app: {
+              url: "https://t.me/onyxshoptg_bot"
+            }
+          }
+        ]
+      ]
+    }
+  });
+});
 // тест
 app.get("/", (req, res) => {
   res.send("ONYX BACKEND WORKING");
