@@ -7,49 +7,30 @@ const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID;
 const WEBHOOK_URL = process.env.WEBHOOK_URL;
 const PORT = process.env.PORT || 3000;
 
+if (!BOT_TOKEN) {
+  throw new Error("BOT_TOKEN is required");
+}
+
+if (!ADMIN_CHAT_ID) {
+  throw new Error("ADMIN_CHAT_ID is required");
+}
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const bot = new TelegramBot(BOT_TOKEN, { webHook: true });
+
+app.get("/", (req, res) => {
+  res.send("ONYX BACKEND WORKING");
+});
+
 bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
 
   await bot.sendMessage(chatId, "Пожалуйста нажмите кнопку снизу⬇️");
 });
 
-  bot.sendMessage(chatId, `
-🔥 ONYX SHOP
-
-Добро пожаловать!
-
-⚡ У нас ты найдёшь:
-— стильную одежду  
-— аксессуары (Goyard, Corteiz и др.)  
-— быстрый заказ  
-
-👇 Жми кнопку ниже и открывай магазин
-  `, {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: "🛍 Открыть магазин",
-            web_app: {
-              url: "https://onyxusx-ai.github.io/onyx-shop-miniapp/"
-            }
-          }
-        ]
-      ]
-    }
-  });
-});
-// тест
-app.get("/", (req, res) => {
-  res.send("ONYX BACKEND WORKING");
-});
-
-// получение заказа
 app.post("/api/order", async (req, res) => {
   try {
     const {
@@ -83,16 +64,15 @@ app.post("/api/order", async (req, res) => {
   }
 });
 
-// webhook
 app.post(`/bot${BOT_TOKEN}`, (req, res) => {
   bot.processUpdate(req.body);
   res.sendStatus(200);
 });
 
-// получение chat id
 bot.on("message", (msg) => {
   console.log("CHAT_ID:", msg.chat.id);
 });
+
 app.get("/send-channel-post", async (req, res) => {
   try {
     await bot.sendMessage(
@@ -124,14 +104,16 @@ app.get("/send-channel-post", async (req, res) => {
 
     res.send("OK");
   } catch (e) {
-    console.log(e);
+    console.log("CHANNEL POST ERROR:", e);
     res.status(500).send("ERROR");
   }
 });
+
 app.listen(PORT, async () => {
   console.log("Server started");
 
   if (WEBHOOK_URL) {
     await bot.setWebHook(`${WEBHOOK_URL}/bot${BOT_TOKEN}`);
+    console.log("Webhook set");
   }
 });
