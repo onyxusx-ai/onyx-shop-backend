@@ -16,6 +16,7 @@ if (!ADMIN_CHAT_ID) {
 }
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
@@ -27,13 +28,13 @@ app.get("/", (req, res) => {
 
 bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
-
   await bot.sendMessage(chatId, "Пожалуйста нажмите кнопку снизу⬇️");
 });
 
 app.post("/api/order", async (req, res) => {
   try {
     const {
+      source = "САЙТ",
       items = [],
       total = 0,
       customerName = "Не указано",
@@ -41,14 +42,25 @@ app.post("/api/order", async (req, res) => {
       customerComment = "Без комментария"
     } = req.body;
 
-    let text = `🔥 НОВЫЙ ЗАКАЗ\n\n`;
+    let text = `🔥 НОВЫЙ ЗАКАЗ (${source})\n\n`;
 
-    items.forEach((item, i) => {
-      text += `${i + 1}. ${item.name}\n`;
-      text += `Размер / цвет: ${item.size}\n`;
-      text += `Кол-во: ${item.qty}\n`;
-      text += `Цена: ${item.priceRub}₽\n\n`;
-    });
+    if (!Array.isArray(items) || items.length === 0) {
+      text += `Товары не переданы\n\n`;
+    } else {
+      items.forEach((item, i) => {
+        const name = item.name || "Без названия";
+        const size = item.size || "Не указан";
+        const color = item.color || "Не указан";
+        const qty = item.qty || 1;
+        const priceRub = item.priceRub || 0;
+
+        text += `${i + 1}. ${name}\n`;
+        text += `Размер: ${size}\n`;
+        text += `Цвет: ${color}\n`;
+        text += `Кол-во: ${qty}\n`;
+        text += `Цена: ${priceRub}₽\n\n`;
+      });
+    }
 
     text += `💰 ИТОГО: ${total}₽\n\n`;
     text += `👤 Имя: ${customerName}\n`;
@@ -60,7 +72,7 @@ app.post("/api/order", async (req, res) => {
     res.json({ ok: true });
   } catch (e) {
     console.log("ORDER ERROR:", e);
-    res.status(500).json({ ok: false });
+    res.status(500).json({ ok: false, error: String(e) });
   }
 });
 
@@ -88,7 +100,7 @@ app.get("/send-channel-post", async (req, res) => {
             [
               {
                 text: "🛍 Открыть магазин",
-                  url: "https://onyxusx-ai.github.io/onyx-shop-miniapp/"
+                url: "https://onyxusx-ai.github.io/onyx-shop-miniapp/"
               }
             ]
           ]
@@ -104,10 +116,14 @@ app.get("/send-channel-post", async (req, res) => {
 });
 
 app.listen(PORT, async () => {
-  console.log("Server started");
+  console.log("Server started on port", PORT);
 
   if (WEBHOOK_URL) {
-    await bot.setWebHook(`${WEBHOOK_URL}/bot${BOT_TOKEN}`);
-    console.log("Webhook set");
+    try {
+      await bot.setWebHook(`${WEBHOOK_URL}/bot${BOT_TOKEN}`);
+      console.log("Webhook set");
+    } catch (e) {
+      console.log("WEBHOOK ERROR:", e);
+    }
   }
 });
